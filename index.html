@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Finder</title>
+</head>
+<body style="text-align:center; padding:30px; background:#121212; color:white; font-family:sans-serif;">
+    <h2>FamPay Detail Finder</h2>
+    <p style="color:#aaa;">UPI ID daalein aur details nikaalein</p>
+    <input id="upi" placeholder="example@fam" style="padding:15px; width:85%; border-radius:8px; border:none; outline:none; font-size:16px;">
+    <br><br>
+    <button onclick="search()" style="padding:15px 30px; background:#007bff; color:white; border:none; border-radius:8px; font-weight:bold; width:90%; font-size:16px;">Find Details</button>
+    <div id="out" style="margin-top:40px; font-size:1.3em; color:#00ff00; line-height:1.6;"></div>
+
+    <script>
+    async function search() {
+        const val = document.getElementById('upi').value.trim();
+        if(!val) return alert("Bhai UPI toh daal!");
+        const outDiv = document.getElementById('out');
+        outDiv.innerHTML = "🔍 Details nikaal raha hoon...";
+        
+        try {
+            // Yeh aapke api folder ke andar wali file ko call karega
+            const res = await fetch(`/api/find?upi_id=${val}`);
+            const data = await res.json();
+            
+            if(data.user) {
+                outDiv.innerHTML = `👤 <b>Naam:</b> ${data.user.first_name} ${data.user.last_name}<br>📞 <b>Number:</b> ${data.user.contact.phone_number}`;
+            } else {
+                outDiv.innerHTML = "❌ Koi details nahi mili!";
+            }
+        } catch(e) { 
+            outDiv.innerHTML = "⚠️ API Connect nahi ho rahi. Vercel par deploy karein."; 
+        }
+    }
+    </script>
+</body>
+</html>
